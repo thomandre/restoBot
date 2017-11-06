@@ -1,0 +1,8 @@
+// gérer l'enchainement des intents giveLocation et listRestaurant
+
+[*] se plugguer sur une api de resto
+[*] afficher le resto le mieux placé avec un lien vers yelp, foursquare ou google :-)
+[ ] se plugguer sur FB
+[ ] ajouter des suggestions
+[ ] profiter de la vie
+
