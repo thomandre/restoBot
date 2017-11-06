@@ -5,8 +5,8 @@ var config   = require('./config');
 const Yelp   = require('node-yelp-api-v3');
 
 const yelp = new Yelp({
-  consumer_key: config.consumer_key,
-  consumer_secret: config.consumer_secret
+  consumer_key: config.yelp.consumer_key,
+  consumer_secret: config.yelp.consumer_secret
 });
 
 var googleMapsClient = require('@google/maps').createClient({
@@ -31,6 +31,12 @@ server.post('/api/messages', connector.listen());
 var bot = new builder.UniversalBot(connector);
 
 bot.dialog('/', intents);
+
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+  // application specific logging, throwing an error, or other logic here
+});
+
 
 function search(savedRestos, locationCoords, foodType) {
 	console.log("-------- LOOKING FOR A RESTO : " + foodType + " at " + locationCoords + " ----------");
@@ -77,13 +83,13 @@ intents.matches('giveLocation', [
         if(location == null) {
         	session.send(`Hum, je n'ai pas bien compris. Est-ce que c'est à Paris ? Pouvez-vous reformuler, s'il vous plait ?`);         	
         } else {
-			session.userData.location = location.entity;
+			session.conversationData.location = location.entity;
 			googleMapsClient.geocode({
 				address: 'métro ' + location.entity + ', Paris, France'
 			}, function(err, response) {
 				if (!err) {
-					session.userData.locationCoords = response.json.results[0].geometry.location;
-			        let restosFound = search(session.userData.savedRestos, session.userData.locationCoords, session.userData.foodType);
+					session.conversationData.locationCoords = response.json.results[0].geometry.location;
+			        let restosFound = search(session.userData.savedRestos, session.conversationData.locationCoords, session.conversationData.foodType);
 			        if(restosFound[0] != null) {
 				        session.send(`Voici ce que je vous propose : ${restosFound[0].name}.`);
 			        } else {
@@ -93,10 +99,10 @@ intents.matches('giveLocation', [
 				    session.send(`Désolé, je n'ai pas compris où vous êtes...`);    
 				}
 			});
-			if(session.userData.foodType == null) {
-		        session.send(`Quelle type de restaurant chercher à ${session.userData.location} ?`);
+			if(session.conversationData.foodType == null) {
+		        session.send(`Quelle type de restaurant chercher à ${session.conversationData.location} ?`);
 			} else {
-		        session.send(`Je recherche ${session.userData.foodType} vers ${session.userData.location}...`);
+		        session.send(`Je recherche ${session.conversationData.foodType} vers ${session.conversationData.location}...`);
 			}
 	    }
     }
@@ -168,12 +174,12 @@ intents.matches('listRestaurants', [
     	if(foodType == null) {
         	session.send(`Hum, je n'ai pas bien compris. Pouvez-vous reformuler, s'il vous plait ?`); 
     	} else {
-    		session.userData.foodType = foodType.entity;   
-    		if(session.userData.location == null) {
-		        session.send(`Vers quel métro voulez-vous chercher ${session.userData.foodType} ?`);
+    		session.conversationData.foodType = foodType.entity;   
+    		if(session.conversationData.location == null) {
+		        session.send(`Vers quel métro voulez-vous chercher ${session.conversationData.foodType} ?`);
     		} else {
-		        session.send(`Je recherche ${session.userData.foodType} vers ${session.userData.location}...`);
-		        let restosFound = search(session.userData.savedRestos, session.userData.locationCoords, session.userData.foodType);
+		        session.send(`Je recherche ${session.conversationData.foodType} vers ${session.conversationData.location}...`);
+		        let restosFound = search(session.userData.savedRestos, session.conversationData.locationCoords, session.conversationData.foodType);
 		        if(restosFound[0] != null) {
 			        session.send(`Voici ce que je vous propose : ${restosFound[0].name}.`);
 		        } else {
