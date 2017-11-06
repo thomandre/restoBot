@@ -40,13 +40,13 @@ function search(savedRestos, locationCoords, foodType) {
 		if(resto != null) {
 			for (var cat of resto.categories) {
 				if(cat.title.toLowerCase() == foodType) {
-					console.log(locationCoords);
+					//console.log(locationCoords);
 				    let point1 = new GeoPoint(locationCoords.lat, locationCoords.lng);
-					console.log(point1);
+					//console.log(point1);
 					let point2 = new GeoPoint(resto.coordinates.latitude, resto.coordinates.longitude);
-					console.log(point2);
+					//console.log(point2);
 					let distance = point1.distanceTo(point2, true)
-					console.log("Distance: " + distance);
+					//console.log("Distance: " + distance);
 					if(distance < 1) {
 						compatibleRestos.push(resto);
 					}
@@ -54,7 +54,7 @@ function search(savedRestos, locationCoords, foodType) {
 			}
 		}
 	}
-	console.log(compatibleRestos);
+	//console.log(compatibleRestos);
 	return compatibleRestos;
 }
 

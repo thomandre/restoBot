@@ -7,3 +7,5 @@ config.yelp.consumer_key = "";
 config.yelp.consumer_secret = "";
 
 config.google.maps_key = "";
+
+module.exports = config;
