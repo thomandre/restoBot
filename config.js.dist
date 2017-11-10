@@ -8,4 +8,6 @@ config.yelp.consumer_secret = "";
 
 config.google.maps_key = "";
 
+config.microsoft.subscription_key = "";
+
 module.exports = config;

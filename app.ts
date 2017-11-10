@@ -19,7 +19,7 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log(`${server.name} listening to ${server.url}`);
 });
 
-let url = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/1e7b9493-01f1-4a30-bad3-4678d032f9cd?subscription-key=cad2208ebf9b48a1a3680e5b6648950a&staging=true&verbose=true&timezoneOffset=0&q=';
+let url = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/1e7b9493-01f1-4a30-bad3-4678d032f9cd?subscription-key=' + config.microsoft.subscription_key + '&staging=true&verbose=true&timezoneOffset=0&q=';
 let recognizer = new builder.LuisRecognizer(url);
 let intents = new builder.IntentDialog({ recognizers: [recognizer] });
 
@@ -42,17 +42,17 @@ function search(savedRestos, locationCoords, foodType) {
 	console.log("-------- LOOKING FOR A RESTO : " + foodType + " at " + locationCoords + " ----------");
 	var compatibleRestos = [];
 	for (var resto of savedRestos) {
-//		console.log(resto);
+		console.log(resto);
 		if(resto != null) {
 			for (var cat of resto.categories) {
 				if(cat.title.toLowerCase() == foodType) {
-					//console.log(locationCoords);
+					console.log(locationCoords);
 				    let point1 = new GeoPoint(locationCoords.lat, locationCoords.lng);
-					//console.log(point1);
+					console.log(point1);
 					let point2 = new GeoPoint(resto.coordinates.latitude, resto.coordinates.longitude);
-					//console.log(point2);
+					console.log(point2);
 					let distance = point1.distanceTo(point2, true)
-					//console.log("Distance: " + distance);
+					console.log("Distance: " + distance);
 					if(distance < 1) {
 						compatibleRestos.push(resto);
 					}
@@ -119,7 +119,6 @@ intents.matches('congrats', [
 					    	`Content que ça vous plaise !`, 
 					    	`Votre satisfaction, c'est mon moteur.`];
         session.send(tanksMessages);
-	    session.userData.savedRestos = [];
     }
 ]);
 
@@ -130,6 +129,7 @@ intents.matches('saveRestaurant', [
 	    	session.userData.savedRestos = [];
     	}
         let restoName = builder.EntityRecognizer.findEntity(args.entities, 'restoName'); // Extraction d'entité
+        console.log(restoName);
         if(restoName != null) {
 			// yelp.searchBusiness(params);
 			yelp.searchBusiness({ term: restoName.entity, location: "Paris", categories: "restaurants", locale: "fr_FR", limit:1 }).then((results) => {
