@@ -2,6 +2,7 @@ var config = {};
 
 config.google = {};
 config.yelp = {};
+config.microsoft = {};
 
 config.yelp.consumer_key = "";
 config.yelp.consumer_secret = "";
